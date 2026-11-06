@@ -3,6 +3,8 @@ import { Raycaster } from "@/components/Raycaster";
 import { GITHUB, sections, type Project } from "@/data/projects";
 
 const GPG = "BF1A F838 82B9 1C50 AA8E  ABEB 37D1 A9D4 86F0 2DA0";
+// Ссылка ведёт на GitHub, поэтому новое фото профиля появится здесь само.
+const AVATAR = "https://avatars.githubusercontent.com/u/284035821?v=4&s=460";
 
 const contacts = [
   { label: "GitHub", value: "villetacore", href: GITHUB, rel: "me" },
@@ -102,7 +104,17 @@ export default function Home() {
       <main id="top">
         <section className="hero wrap">
           <div className="hero-text">
-            <p className="mono eyebrow">Go / Rust developer</p>
+            <div className="hero-id">
+              <Image
+                className="avatar"
+                src={AVATAR}
+                width={460}
+                height={460}
+                alt="Фото профиля Виллеты Корь на GitHub"
+                priority
+              />
+              <p className="mono eyebrow">Go / Rust developer</p>
+            </div>
             <h1 className="hero-title">
               Виллета
               <br />

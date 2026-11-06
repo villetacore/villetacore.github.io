@@ -154,7 +154,23 @@ img {
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   gap: 32px clamp(32px, 5vw, 80px);
   align-items: end;
-  padding-block: clamp(32px, 6vw, 88px) 0;
+  padding-block: clamp(24px, 3vw, 48px) 0;
+}
+
+.hero-id {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar {
+  flex: none;
+  width: clamp(80px, 8vw, 116px);
+  height: auto;
+  aspect-ratio: 1;
+  background: var(--vs-surface);
+  border: 1px solid var(--vs-border);
+  box-shadow: 4px 4px 0 var(--vs-accent);
 }
 
 .eyebrow {
