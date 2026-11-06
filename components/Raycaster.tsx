@@ -105,7 +105,7 @@ function render(image: ImageData, px: number, py: number, angle: number) {
   }
 }
 
-export function Raycaster() {
+export function Raycaster({ label }: { label: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -255,7 +255,7 @@ export function Raycaster() {
       width={W}
       height={H}
       tabIndex={0}
-      aria-label="Маленький рейкастер: камера ходит по лабиринту, в фокусе управляется стрелками или WASD"
+      aria-label={label}
     />
   );
 }

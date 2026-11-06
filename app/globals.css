@@ -147,6 +147,35 @@ img {
   border-bottom-color: var(--vs-accent);
 }
 
+.nav-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 28px;
+}
+
+.lang {
+  display: flex;
+  border: 1px solid var(--vs-border);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lang a {
+  padding: 4px 9px;
+  color: var(--vs-muted);
+  text-decoration: none;
+}
+
+.lang a:hover {
+  color: var(--vs-text);
+}
+
+.lang a[aria-current] {
+  background: var(--vs-primary);
+  color: var(--vs-on-primary);
+}
+
 /* Первый экран */
 
 .hero {
@@ -583,6 +612,10 @@ img {
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.04em;
+}
+
+.missing-note {
+  color: var(--vs-muted);
 }
 
 @media (max-width: 1000px) {

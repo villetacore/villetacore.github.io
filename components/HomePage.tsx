@@ -1,29 +1,24 @@
 import Image from "next/image";
+import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { Raycaster } from "@/components/Raycaster";
 import { GITHUB, sections, type Project } from "@/data/projects";
+import { messages, type Locale } from "@/lib/i18n";
 
 const GPG = "BF1A F838 82B9 1C50 AA8E  ABEB 37D1 A9D4 86F0 2DA0";
 // Ссылка ведёт на GitHub, поэтому новое фото профиля появится здесь само.
 const AVATAR = "https://avatars.githubusercontent.com/u/284035821?v=4&s=460";
 
-const contacts = [
-  { label: "GitHub", value: "villetacore", href: GITHUB, rel: "me" },
-  { label: "X", value: "@villetacore", href: "https://x.com/villetacore", rel: "me" },
-  {
-    label: "Velessoft",
-    value: "velessoft.org",
-    href: "https://velessoft.org",
-    note: "Студия: CRM, ERP и внутренние инструменты",
-  },
-];
-
 const repoUrl = (project: Project) => `${GITHUB}/${project.repo}`;
 
-function Stack({ items }: { items: string[] }) {
-  return <p className="stack mono">{items.join(" · ")}</p>;
-}
-
-function Card({ project, priority }: { project: Project; priority?: boolean }) {
+function Card({
+  project,
+  locale,
+  priority,
+}: {
+  project: Project;
+  locale: Locale;
+  priority?: boolean;
+}) {
   const { image } = project;
   if (!image) return null;
   return (
@@ -33,7 +28,7 @@ function Card({ project, priority }: { project: Project; priority?: boolean }) {
           src={image.src}
           width={image.width}
           height={image.height}
-          alt={image.alt}
+          alt={image.alt[locale]}
           sizes="(max-width: 860px) 100vw, 50vw"
           priority={priority}
         />
@@ -41,17 +36,17 @@ function Card({ project, priority }: { project: Project; priority?: boolean }) {
       <div className="card-body">
         <h3 className="card-title">
           <a className="stretched" href={repoUrl(project)}>
-            {project.name}
+            {project.name[locale]}
             <span className="arrow mono" aria-hidden="true">
               ↗
             </span>
           </a>
         </h3>
-        <p>{project.description}</p>
-        <Stack items={project.stack} />
+        <p>{project.description[locale]}</p>
+        <p className="stack mono">{project.stack.join(" · ")}</p>
         {project.demo && (
           <a className="demo mono" href={project.demo}>
-            Живое демо ↗
+            {messages[locale].demo}
           </a>
         )}
       </div>
@@ -59,12 +54,12 @@ function Card({ project, priority }: { project: Project; priority?: boolean }) {
   );
 }
 
-function Row({ project }: { project: Project }) {
+function Row({ project, locale }: { project: Project; locale: Locale }) {
   return (
     <li>
       <a className="row" href={repoUrl(project)}>
-        <span className="row-name">{project.name}</span>
-        <span className="row-text">{project.description}</span>
+        <span className="row-name">{project.name[locale]}</span>
+        <span className="row-text">{project.description[locale]}</span>
         <span className="row-stack mono">{project.stack.join(" · ")}</span>
         <span className="row-arrow mono" aria-hidden="true">
           ↗
@@ -74,16 +69,28 @@ function Row({ project }: { project: Project }) {
   );
 }
 
-export default function Home() {
+export function HomePage({ locale }: { locale: Locale }) {
+  const t = messages[locale];
   const total = sections.reduce((sum, section) => sum + section.projects.length, 0);
+  const contacts: {
+    label: string;
+    value: string;
+    href: string;
+    rel?: string;
+    note?: string;
+  }[] = [
+    { label: "GitHub", value: "villetacore", href: GITHUB, rel: "me" },
+    { label: "X", value: "@villetacore", href: "https://x.com/villetacore", rel: "me" },
+    { label: "Velessoft", value: "velessoft.org", href: "https://velessoft.org", note: t.velessoftNote },
+  ];
 
   return (
     <>
       <a className="skip" href="#systems">
-        К проектам
+        {t.skip}
       </a>
       <div className="band mono">
-        <span>VILLETACORE / ОТКРЫТЫЕ ПРОЕКТЫ</span>
+        <span>{t.band}</span>
         <span>&gt;HELL&lt;</span>
       </div>
 
@@ -91,14 +98,17 @@ export default function Home() {
         <a className="nav-mark mono" href="#top">
           villetacore
         </a>
-        <nav aria-label="Разделы">
-          {sections.map((section) => (
-            <a key={section.id} href={`#${section.id}`}>
-              {section.title}
-            </a>
-          ))}
-          <a href="#contact">Контакты</a>
-        </nav>
+        <div className="nav-end">
+          <nav aria-label={t.navLabel}>
+            {sections.map((section) => (
+              <a key={section.id} href={`#${section.id}`}>
+                {section.title[locale]}
+              </a>
+            ))}
+            <a href="#contact">{t.contacts}</a>
+          </nav>
+          <LanguageSwitch current={locale} label={t.languageLabel} />
+        </div>
       </header>
 
       <main id="top">
@@ -110,23 +120,21 @@ export default function Home() {
                 src={AVATAR}
                 width={460}
                 height={460}
-                alt="Фото профиля Виллеты Корь на GitHub"
+                alt={t.avatarAlt}
                 priority
               />
-              <p className="mono eyebrow">Go / Rust developer</p>
+              <p className="mono eyebrow">{t.role}</p>
             </div>
             <h1 className="hero-title">
-              Виллета
+              {t.firstName}
               <br />
-              Корь<span className="cursor">_</span>
+              {t.lastName}
+              <span className="cursor">_</span>
             </h1>
-            <p className="hero-lead">
-              Пишу на Go и Rust: ядро ОС с нуля, шутер для PlayStation 1, Doom для экрана вейпа и
-              инструменты на каждый день.
-            </p>
+            <p className="hero-lead">{t.lead}</p>
             <div className="hero-actions">
               <a className="button" href="#systems">
-                Смотреть проекты
+                {t.seeProjects}
               </a>
               <a className="button button-ghost" href={GITHUB}>
                 GitHub ↗
@@ -135,26 +143,26 @@ export default function Home() {
           </div>
 
           <figure className="screen">
-            <Raycaster />
+            <Raycaster label={t.screenLabel} />
             <figcaption className="mono">
-              <span>128×64, как у MiniDoom.</span>
-              <span className="screen-hint">Нажмите и ходите стрелками.</span>
+              <span>{t.screenCaption}</span>
+              <span className="screen-hint">{t.screenHint}</span>
             </figcaption>
           </figure>
 
           <dl className="facts mono">
             <div>
-              <dt>Проектов здесь</dt>
+              <dt>{t.factProjects}</dt>
               <dd>{total}</dd>
             </div>
             <div>
-              <dt>Компания</dt>
+              <dt>{t.factCompany}</dt>
               <dd>
                 <a href="https://velessoft.org">Velessoft</a>
               </dd>
             </div>
             <div>
-              <dt>Локация</dt>
+              <dt>{t.factLocation}</dt>
               <dd>&gt;HelL&lt;</dd>
             </div>
           </dl>
@@ -167,20 +175,25 @@ export default function Home() {
             <section className="section wrap" id={section.id} key={section.id}>
               <header className="section-head">
                 <p className="mono section-index">{String(index + 1).padStart(2, "0")}</p>
-                <h2>{section.title}</h2>
-                <p className="section-intro">{section.intro}</p>
+                <h2>{section.title[locale]}</h2>
+                <p className="section-intro">{section.intro[locale]}</p>
               </header>
               {cards.length > 0 && (
                 <div className="cards">
                   {cards.map((project) => (
-                    <Card key={project.repo} project={project} priority={index === 0} />
+                    <Card
+                      key={project.repo}
+                      project={project}
+                      locale={locale}
+                      priority={index === 0}
+                    />
                   ))}
                 </div>
               )}
               {rows.length > 0 && (
                 <ul className="rows">
                   {rows.map((project) => (
-                    <Row key={project.repo} project={project} />
+                    <Row key={project.repo} project={project} locale={locale} />
                   ))}
                 </ul>
               )}
@@ -191,8 +204,8 @@ export default function Home() {
         <section className="section wrap" id="contact">
           <header className="section-head">
             <p className="mono section-index">05</p>
-            <h2>Контакты</h2>
-            <p className="section-intro">Где меня найти.</p>
+            <h2>{t.contacts}</h2>
+            <p className="section-intro">{t.contactsIntro}</p>
           </header>
           <ul className="contacts">
             {contacts.map((contact) => (
@@ -215,8 +228,8 @@ export default function Home() {
       </main>
 
       <footer className="footer wrap mono">
-        <span>Next.js + токены Velessoft UI</span>
-        <a href={`${GITHUB}/villetacore.github.io`}>Исходники сайта ↗</a>
+        <span>{t.footerStack}</span>
+        <a href={`${GITHUB}/villetacore.github.io`}>{t.footerSource}</a>
       </footer>
     </>
   );
